@@ -1,0 +1,89 @@
+// โครงสร้างนี้ต้องตรงกับตารางที่มีอยู่แล้วใน Supabase
+// ห้ามใช้ `prisma migrate` / `prisma db push` กับฐานข้อมูลจริง ให้แก้ตารางผ่าน SQL แล้วตรวจด้วย `npm run db:pull`
+//
+// หมายเหตุ: medium_helper.medium_id และ board_direct.position_id เป็น bigint
+// แต่คีย์หลักที่อ้างถึงเป็น smallint Prisma จึงสร้าง relation ไม่ได้
+// การ join ทำในโค้ด (src/features/*/queries.ts)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Medium {
+  id          Int     @id @default(autoincrement()) @map("medium_id") @db.SmallInt
+  titleName   String? @map("title_name") @db.VarChar
+  firstName   String? @map("first_name") @db.VarChar
+  middleName  String? @map("middle_name") @db.VarChar
+  lastName    String? @map("last_name") @db.VarChar
+  nickName    String? @map("nick_name") @db.VarChar
+  godName     Json?   @map("god_name") @db.Json
+  address     String?
+  phoneNumber String? @map("phone_number") @db.VarChar
+  status      String? @db.VarChar
+  sex         String? @db.VarChar
+  profilePath String? @map("profile_path")
+  profileId   String? @map("profile_id") @db.VarChar
+
+  @@map("medium")
+}
+
+model MediumHelper {
+  id          Int       @id @default(autoincrement()) @map("helper_id") @db.SmallInt
+  titleName   String?   @map("title_name") @db.VarChar
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updateAt    DateTime? @map("update_at") @db.Timestamptz(6)
+  firstName   String?   @map("first_name") @db.VarChar
+  middleName  String?   @map("middle_name") @db.VarChar
+  lastName    String?   @map("last_name") @db.VarChar
+  nickName    String?   @map("nick_name") @db.VarChar
+  address     String?
+  phoneNumber String?   @map("phone_number") @db.VarChar
+  status      String?   @db.VarChar
+  sex         String?   @db.VarChar
+  mediumId    BigInt?   @map("medium_id")
+  profilePath String?   @map("profile_path")
+  profileId   String?   @map("profile_id") @db.VarChar
+
+  @@map("medium_helper")
+}
+
+model Position {
+  id        Int       @id @default(autoincrement()) @db.SmallInt
+  name      String?   @db.VarChar
+  belongIn  String?   @map("belong_in") @db.VarChar
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("position")
+}
+
+model BoardDirect {
+  id          Int     @id @default(autoincrement()) @db.SmallInt
+  titleName   String? @map("title_name") @db.VarChar
+  firstName   String? @map("first_name") @db.VarChar
+  middleName  String? @map("middle_name") @db.VarChar
+  lastName    String? @map("last_name") @db.VarChar
+  positionId  BigInt? @map("position_id")
+  profilePath String? @map("profile_path")
+  // เพิ่มด้วย prisma/sql/001_board_direct_profile_id.sql
+  profileId   String? @map("profile_id") @db.VarChar
+  phoneNumber String? @map("phone_number") @db.VarChar
+
+  @@map("board_direct")
+}
+
+// ผู้ดูแลระบบสำหรับเข้าสู่ระบบหลังบ้าน (สร้างด้วย prisma/sql/002_admin.sql)
+// รหัสผ่านเก็บเป็น bcrypt hash เท่านั้น — เพิ่มผู้ใช้ด้วย `npm run admin:create`
+model Admin {
+  id           Int       @id @default(autoincrement()) @db.SmallInt
+  username     String    @unique @db.VarChar(50)
+  passwordHash String    @map("password_hash") @db.VarChar
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  lastLoginAt  DateTime? @map("last_login_at") @db.Timestamptz(6)
+
+  @@map("admin")
+}
