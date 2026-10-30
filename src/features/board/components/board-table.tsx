@@ -45,7 +45,11 @@ export async function BoardTable({ searchParams }: { searchParams: Promise<Searc
             {rows.map((b) => (
               <TableRow key={b.id}>
                 <TableCell className="py-3 pl-4">
-                  <PersonCell {...b} title={formatFullName(b)} />
+                  <PersonCell
+                    {...b}
+                    title={formatFullName(b)}
+                    subtitle={b.nickName ? `ชื่อเล่น: ${b.nickName}` : null}
+                  />
                 </TableCell>
                 <TableCell>
                   {b.positionName ? (

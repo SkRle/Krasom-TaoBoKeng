@@ -8,7 +8,7 @@ export async function listBoard(params: ReturnType<typeof parseListParams>) {
   const positionId = params.get("position");
   const where: Prisma.BoardDirectWhereInput = {
     ...(positionId && /^\d+$/.test(positionId) && { positionId: BigInt(positionId) }),
-    ...(personSearch(params.q, ["firstName", "middleName", "lastName", "phoneNumber"]) as Prisma.BoardDirectWhereInput),
+    ...(personSearch(params.q, ["firstName", "middleName", "lastName", "nickName", "phoneNumber"]) as Prisma.BoardDirectWhereInput),
   };
 
   const [rows, total] = await prisma.$transaction([

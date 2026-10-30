@@ -5,7 +5,7 @@ import { AvatarUpload } from "@/components/shared/avatar-upload";
 import { EntityFormDialog } from "@/components/shared/entity-form-dialog";
 import { FormField } from "@/components/shared/form-field";
 import { FormSection, PersonNameFields } from "@/components/shared/person-fields";
-import { SelectField } from "@/components/shared/select-field";
+import { ComboboxField } from "@/components/shared/combobox-field";
 import type { Option } from "@/lib/constants";
 import { NONE_VALUE } from "@/lib/form";
 import { createBoardMember, updateBoardMember } from "../actions";
@@ -35,7 +35,7 @@ export function BoardFormDialog({ member, positionOptions, ...dialogProps }: Pro
           </FormSection>
 
           <FormSection title="ข้อมูลส่วนตัว">
-            <PersonNameFields defaults={member} errors={errors} include={[]} />
+            <PersonNameFields defaults={member} errors={errors} include={["nickName"]} />
           </FormSection>
 
           <FormSection title="ตำแหน่ง">
@@ -53,10 +53,12 @@ export function BoardFormDialog({ member, positionOptions, ...dialogProps }: Pro
                   </Link>
                 </p>
               ) : (
-                <SelectField
+                <ComboboxField
                   id="positionId"
                   name="positionId"
                   placeholder="เลือกตำแหน่ง"
+                  searchPlaceholder="พิมพ์ชื่อตำแหน่ง…"
+                  emptyText="ไม่พบตำแหน่งที่ค้นหา"
                   defaultValue={member?.positionId != null ? String(member.positionId) : undefined}
                   options={[{ value: NONE_VALUE, label: "ไม่ระบุ" }, ...positionOptions]}
                 />

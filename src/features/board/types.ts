@@ -4,6 +4,7 @@ export type BoardRow = {
   firstName: string | null;
   middleName: string | null;
   lastName: string | null;
+  nickName: string | null;
   phoneNumber: string | null;
   positionId: number | null;
   positionName: string | null;

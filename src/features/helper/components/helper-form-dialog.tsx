@@ -4,6 +4,7 @@ import { AvatarUpload } from "@/components/shared/avatar-upload";
 import { EntityFormDialog } from "@/components/shared/entity-form-dialog";
 import { FormField } from "@/components/shared/form-field";
 import { FormSection, PersonNameFields } from "@/components/shared/person-fields";
+import { ComboboxField } from "@/components/shared/combobox-field";
 import { SelectField } from "@/components/shared/select-field";
 import { SEX_OPTIONS, STATUS_OPTIONS } from "@/lib/constants";
 import { NONE_VALUE } from "@/lib/form";
@@ -47,10 +48,12 @@ export function HelperFormDialog({ helper, mediumOptions, ...dialogProps }: Prop
 
           <FormSection title="การดูแล">
             <FormField label="ดูแลม้าทรง" htmlFor="mediumId" error={errors?.mediumId}>
-              <SelectField
+              <ComboboxField
                 id="mediumId"
                 name="mediumId"
                 placeholder="เลือกม้าทรง"
+                searchPlaceholder="พิมพ์ชื่อหรือชื่อเล่นม้าทรง…"
+                emptyText="ไม่พบม้าทรงที่ค้นหา"
                 defaultValue={helper?.mediumId != null ? String(helper.mediumId) : undefined}
                 options={[{ value: NONE_VALUE, label: "ไม่ระบุ" }, ...mediumOptions]}
               />

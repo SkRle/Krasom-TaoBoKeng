@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { optionalIdSchema, personFields } from "@/lib/form";
+import { optionalIdSchema, optionalText, personFields } from "@/lib/form";
 
 export const boardSchema = z.object({
   ...personFields,
+  nickName: optionalText(100),
   positionId: optionalIdSchema,
 });

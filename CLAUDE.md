@@ -158,6 +158,7 @@ public/brand/                     logo.png, temple.jpg
 4. **Run the SQL files once** in Supabase → SQL Editor:
    - `prisma/sql/001_board_direct_profile_id.sql`: adds `profile_id` to `board_direct`; without it, saving board members fails.
    - `prisma/sql/002_admin.sql`: creates the `admin` login table.
+   - `prisma/sql/003_board_direct_nick_name.sql`: adds `nick_name` (ชื่อเล่น) to `board_direct`.
    - Then create the first login with `npm run admin:create`. There is no sign-up page.
 5. **Google Drive** (one-time, signed in as `krasomtaobokeng@gmail.com`):
    1. In Google Cloud Console, create a project and enable the **Google Drive API**.

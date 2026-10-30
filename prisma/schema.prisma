@@ -67,6 +67,8 @@ model BoardDirect {
   firstName   String? @map("first_name") @db.VarChar
   middleName  String? @map("middle_name") @db.VarChar
   lastName    String? @map("last_name") @db.VarChar
+  // เพิ่มด้วย prisma/sql/003_board_direct_nick_name.sql
+  nickName    String? @map("nick_name") @db.VarChar
   positionId  BigInt? @map("position_id")
   profilePath String? @map("profile_path")
   // เพิ่มด้วย prisma/sql/001_board_direct_profile_id.sql
