@@ -70,7 +70,7 @@ export async function MediumsTable({ searchParams }: { searchParams: Promise<Sea
                 </TableCell>
                 <TableCell>{m.sex ? (isFemale(m.sex) ? "หญิง" : "ชาย") : "-"}</TableCell>
                 <TableCell className="tabular-nums">{formatPhone(m.phoneNumber)}</TableCell>
-                <TableCell className="text-center tabular-nums">{m.helperCount}</TableCell>
+                <TableCell className="text-center tabular-nums">{m.helpers.length}</TableCell>
                 <TableCell>
                   <StatusBadge status={m.status} />
                 </TableCell>

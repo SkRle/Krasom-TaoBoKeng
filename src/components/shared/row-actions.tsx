@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,16 +13,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { ActionResult } from "@/lib/form";
 
-/** เมนู ⋯ ท้ายแถว: แก้ไข / ลบ */
+type DialogProps = { open: boolean; onOpenChange: (open: boolean) => void };
+
+/** เมนู ⋯ ท้ายแถว: (ดูข้อมูล) / แก้ไข / ลบ */
 export function RowActions({
   itemName,
   onDelete,
   renderEdit,
+  renderView,
 }: {
   itemName: string;
   onDelete: () => Promise<ActionResult>;
-  renderEdit: (props: { open: boolean; onOpenChange: (open: boolean) => void }) => React.ReactNode;
+  renderEdit: (props: DialogProps) => React.ReactNode;
+  /** หน้าต่างดูข้อมูล (ถ้ามี) — `onEdit` ปิดหน้าต่างนี้แล้วเปิดฟอร์มแก้ไข */
+  renderView?: (props: DialogProps & { onEdit: () => void }) => React.ReactNode;
 }) {
+  const [viewOpen, setViewOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -35,6 +41,12 @@ export function RowActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
+          {renderView && (
+            <DropdownMenuItem onSelect={() => setViewOpen(true)}>
+              <Eye />
+              ดูข้อมูล
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onSelect={() => setEditOpen(true)}>
             <Pencil />
             แก้ไข
@@ -46,6 +58,14 @@ export function RowActions({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      {renderView?.({
+        open: viewOpen,
+        onOpenChange: setViewOpen,
+        onEdit: () => {
+          setViewOpen(false);
+          setEditOpen(true);
+        },
+      })}
       {renderEdit({ open: editOpen, onOpenChange: setEditOpen })}
       <ConfirmDeleteDialog open={deleteOpen} onOpenChange={setDeleteOpen} itemName={itemName} onConfirm={onDelete} />
     </>

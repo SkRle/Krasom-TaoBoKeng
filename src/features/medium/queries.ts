@@ -2,7 +2,7 @@ import "server-only";
 import type { Prisma } from "@/generated/prisma/client";
 import { personSearch, type parseListParams } from "@/lib/list-params";
 import { prisma } from "@/lib/prisma";
-import { parseGodName, type MediumRow } from "./types";
+import { parseGodName, type MediumHelperSummary, type MediumListRow, type MediumRow } from "./types";
 
 type Medium = Prisma.MediumGetPayload<object>;
 
@@ -24,18 +24,31 @@ export async function listMediums(params: ReturnType<typeof parseListParams>) {
     prisma.medium.count({ where }),
   ]);
 
-  // จำนวนพี่เลี้ยงของแต่ละม้าทรง
-  const helperCounts = await prisma.mediumHelper.groupBy({
-    by: ["mediumId"],
+  // พี่เลี้ยงของม้าทรงในหน้านี้ (medium_id เป็น bigint ไม่มี relation ใน Prisma → join เอง)
+  const helpers = await prisma.mediumHelper.findMany({
     where: { mediumId: { in: rows.map((r) => BigInt(r.id)) } },
-    _count: { _all: true },
+    select: {
+      id: true,
+      titleName: true,
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      nickName: true,
+      phoneNumber: true,
+      status: true,
+      profileId: true,
+      mediumId: true,
+    },
+    orderBy: { id: "asc" },
   });
-  const countMap = new Map(helperCounts.map((h) => [Number(h.mediumId), h._count._all]));
+  const helperMap = new Map<number, MediumHelperSummary[]>();
+  for (const { mediumId, ...h } of helpers) {
+    const key = Number(mediumId);
+    helperMap.set(key, [...(helperMap.get(key) ?? []), h]);
+  }
 
-  return {
-    rows: rows.map((r) => ({ ...toMediumRow(r), helperCount: countMap.get(r.id) ?? 0 })),
-    total,
-  };
+  const result: MediumListRow[] = rows.map((r) => ({ ...toMediumRow(r), helpers: helperMap.get(r.id) ?? [] }));
+  return { rows: result, total };
 }
 
 export async function getMediumSexCounts() {
